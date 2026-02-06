@@ -3,7 +3,7 @@
     animation: 10s reverse infinite;
     border-radius: 2em;
     height: 70%;
-    width: 63%;
+    width: 70vw;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -120,6 +120,7 @@ strong{
 
 #right{
 float: right;
+object-fit: cover;
 }
 
 #left{

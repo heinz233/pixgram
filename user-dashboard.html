@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Photographer - Pixgram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+<span>📷</span> Pixgram
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="user-dashboard.html" class="nav-link">Find Photographer</a>
+                <a href="#" id="myBookingsLink" class="nav-link" onclick="openMyBookings()">My Bookings</a>
+                <a href="#" onclick="App.logout()" class="nav-btn nav-btn-outline">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h1 class="page-title">Find Your Perfect Photographer</h1>
+            <p class="page-subtitle">Search by category, location, gender, and preferences</p>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="search-container">
+            <div class="search-filters">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search by name or skill...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Category</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="music-video">Music Video</option>
+                        <option value="home-tour">Home Tour</option>
+                        <option value="family-portrait">Family Portrait</option>
+                        <option value="private">Private Sessions</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="product">Product Photography</option>
+                        <option value="event">Event Coverage</option>
+                        <option value="fashion">Fashion/Portrait</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Location</label>
+                    <select class="form-select" id="locationFilter">
+                        <option value="all">All Locations</option>
+                        <option value="Nairobi">Nairobi</option>
+                        <option value="Mombasa">Mombasa</option>
+                        <option value="Kisumu">Kisumu</option>
+                        <option value="Nakuru">Nakuru</option>
+                        <option value="Eldoret">Eldoret</option>
+                        <option value="Thika">Thika</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Gender Preference</label>
+                    <select class="form-select" id="genderFilter">
+                        <option value="all">No Preference</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Age Range</label>
+                    <select class="form-select" id="ageFilter">
+                        <option value="all">No Preference</option>
+                        <option value="18-25">18-25 years</option>
+                        <option value="26-35">26-35 years</option>
+                        <option value="36-45">36-45 years</option>
+                        <option value="46+">46+ years</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="searchPhotographers()">Search Photographers</button>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsContainer">
+            <h2 style="margin-bottom: 20px; color: white;">Available Photographers</h2>
+            <div class="grid grid-3" id="photographersGrid">
+                <!-- Photographers will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Book Photographer</h3>
+                <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="bookingModalContent">
+                <!-- Booking form will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- My Bookings Modal -->
+    <div id="myBookingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">My Bookings</h3>
+                <button class="modal-close" onclick="closeMyBookings()">&times;</button>
+            </div>
+            <div class="modal-body" id="myBookingsContent">
+                <!-- Bookings will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="payment.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let selectedPhotographer = null;
+        let searchResults = [];
+
+        // Check authentication
+        const currentUser = AppData.getCurrentUser();
+        const userRole = AppData.getUserRole();
+        
+        if (!currentUser || userRole !== 'user') {
+            // Allow viewing without login, but prompt for login on booking
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for category from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            if (category) {
+                document.getElementById('categoryFilter').value = category;
+            }
+            
+            searchPhotographers();
+        });
+
+        // Search photographers
+        function searchPhotographers() {
+            const filters = {
+                search: document.getElementById('searchInput').value,
+                category: document.getElementById('categoryFilter').value,
+                location: document.getElementById('locationFilter').value,
+                gender: document.getElementById('genderFilter').value,
+                ageRange: document.getElementById('ageFilter').value
+            };
+            
+            searchResults = AppData.searchPhotographers(filters);
+            displayResults();
+        }
+
+        function displayResults() {
+            const grid = document.getElementById('photographersGrid');
+            
+            if (searchResults.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1; background: white; border-radius: 15px;">
+                        <div class="empty-icon">🔍</div>
+                        <h3 class="empty-title">No Photographers Found</h3>
+                        <p class="empty-description">Try adjusting your filters or search criteria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = searchResults.map(p => `
+                <div class="photographer-card">
+                    <div class="photographer-image">
+                        ${p.gender === 'female' ? '👩' : p.gender === 'male' ? '👨' : '📷'}
+                    </div>
+                    <div class="photographer-info">
+                        <h3 class="photographer-name">${p.fullName}</h3>
+                        <p class="photographer-location">📍 ${p.location || 'N/A'}</p>
+                        <div class="photographer-tags">
+                            ${(p.categories || []).slice(0, 3).map(c => `<span class="tag">${c}</span>`).join('')}
+                        </div>
+                        <p style="font-size: 13px; color: #666; margin-bottom: 10px;">${(p.bio || '').substring(0, 80)}...</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="photographer-price">From KES 1,500</span>
+                            <button class="btn btn-primary btn-sm" onclick="openBooking('${p.id}')">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openBooking(photographerId) {
+            if (!currentUser || userRole !== 'user') {
+                alert('Please login as a client to book a photographer');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            selectedPhotographer = AppData.getUsers().find(p => p.id === photographerId);
+            
+            if (!selectedPhotographer) {
+                alert('Photographer not found');
+                return;
+            }
+
+            const content = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">Booking: ${selectedPhotographer.fullName}</h4>
+                    <p style="color: #666;">📍 ${selectedPhotographer.location}</p>
+                </div>
+                
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label class="form-label">Service Category *</label>
+                        <select class="form-select" id="serviceCategory" required>
+                            <option value="">Select category</option>
+                            ${(selectedPhotographer.categories || []).map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Select Package *</label>
+                        <div class="grid grid-3" style="gap: 10px; margin-top: 10px;">
+                            <label class="bundle-card" style="padding: 15px;">
+                                <input type="radio" name="bundle" value="basic" required>
+                                <div class="bundle-name">Basic</div>
+                                <div class="bundle-price">KES 1,500</div>
+                            </label>
+                            <label class="bundle-card" style="padding: 15px;">
+                                <input type="radio" name="bundle" value="standard">
+                                <div class="bundle-name">Standard</div>
+                                <div class="bundle-price">KES 3,500</div>
+                            </label>
+                            <label class="bundle-card" style="padding: 15px;">
+                                <input type="radio" name="bundle" value="premium">
+                                <div class="bundle-name">Premium</div>
+                                <div class="bundle-price">KES 7,000</div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Event Date *</label>
+                        <input type="date" class="form-control" id="eventDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Event Location *</label>
+                        <input type="text" class="form-control" id="eventLocation" placeholder="Enter location" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="notes" rows="2" placeholder="Any special requirements..."></textarea>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Service Fee:</span>
+                            <span id="serviceFee">KES 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                            <span>Total:</span>
+                            <span id="totalAmount" style="color: #667eea;">KES 0</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Proceed to Payment</button>
+                </form>
+            `;
+            
+            document.getElementById('bookingModalContent').innerHTML = content;
+            document.getElementById('bookingModal').style.display = 'flex';
+            
+            // Update price when bundle is selected
+            document.querySelectorAll('input[name="bundle"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updatePrice(this.value);
+                });
+            });
+            
+            // First bundle selected by default
+            updatePrice('basic');
+        }
+
+        function updatePrice(bundle) {
+            const prices = {
+                'basic': 1500,
+                'standard': 3500,
+                'premium': 7000
+            };
+            
+            const price = prices[bundle] || 0;
+            document.getElementById('serviceFee').textContent = 'KES ' + price.toLocaleString();
+            document.getElementById('totalAmount').textContent = 'KES ' + price.toLocaleString();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        // Handle booking form submission
+        document.addEventListener('submit', function(e) {
+            if (e.target.id === 'bookingForm') {
+                e.preventDefault();
+                
+                const bundle = document.querySelector('input[name="bundle"]:checked').value;
+                const prices = {
+                    'basic': 1500,
+                    'standard': 3500,
+                    'premium': 7000
+                };
+                
+                const bookingData = {
+                    photographerId: selectedPhotographer.id,
+                    photographerName: selectedPhotographer.fullName,
+                    clientId: currentUser.id,
+                    clientName: currentUser.fullName,
+                    service: document.getElementById('serviceCategory').value,
+                    bundle: bundle,
+                    date: document.getElementById('eventDate').value,
+                    location: document.getElementById('eventLocation').value,
+                    notes: document.getElementById('notes').value,
+                    amount: prices[bundle]
+                };
+                
+                // Show payment
+                PaymentSimulator.showPaymentModal('booking', prices[bundle], {
+                    success: function(payment) {
+                        // Save booking
+                        AppData.saveBooking(bookingData);
+                        App.showNotification('Booking confirmed successfully!', 'success');
+                        closeBookingModal();
+                        openMyBookings();
+                    },
+                    error: function(error) {
+                        alert('Payment failed: ' + error);
+                    }
+                });
+            }
+        });
+
+        function openMyBookings() {
+            const bookings = AppData.getBookings().filter(b => b.clientId === currentUser.id);
+            
+            if (bookings.length === 0) {
+                document.getElementById('myBookingsContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <h3 class="empty-title">No Bookings Yet</h3>
+                        <p class="empty-description">Find a photographer and make your first booking!</p>
+                        <button class="btn btn-primary" onclick="closeMyBookings(); searchPhotographers();">Find Photographers</button>
+                    </div>
+                `;
+            } else {
+                document.getElementById('myBookingsContent').innerHTML = `
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Photographer</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${bookings.map(b => `
+                                    <tr>
+                                        <td>${b.photographerName}</td>
+                                        <td>${b.service} (${b.bundle})</td>
+                                        <td>${b.date}</td>
+                                        <td>KES ${b.amount.toLocaleString()}</td>
+                                        <td><span class="badge badge-${b.status === 'pending' ? 'warning' : b.status === 'accepted' ? 'success' : 'danger'}">${b.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('myBookingsModal').style.display = 'flex';
+        }
+
+        function closeMyBookings() {
+            document.getElementById('myBookingsModal').style.display = 'none';
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

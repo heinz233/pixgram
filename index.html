@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixgram - Find Your Perfect Photographer</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .btn {
+            padding: 15px 40px;
+            font-size: 16px;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-white:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-white {
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline-white:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Features */
+        .features {
+            background: white;
+            padding: 80px 20px;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 50px;
+            color: var(--dark);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            background: var(--light);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .feature-desc {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Categories Preview */
+        .categories-preview {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .categories-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .categories-title {
+            text-align: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .category-item {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .category-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-3px);
+        }
+
+        .category-item .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .category-item .name {
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-copy {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span>📷</span> Pixgram
+            </a>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#categories" class="nav-link">Categories</a>
+                <a href="user-dashboard.html" class="nav-link">Find Photographer</a>
+                <a href="photographer-register.html" class="nav-link" data-role="photographer">Become a Photographer</a>
+                <a href="#" id="loginLink" class="nav-btn nav-btn-outline" onclick="showAuthModal()">Login</a>
+                <a href="#" id="signupLink" class="nav-btn nav-btn-primary" onclick="showAuthModal()">Get Started</a>
+                <a href="#" id="dashboardLink" class="nav-btn nav-btn-primary" style="display: none;">Dashboard</a>
+                <a href="#" id="logoutLink" class="nav-btn nav-btn-outline" style="display: none;" onclick="App.logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find the Perfect Photographer for Your Moment</h1>
+            <p>Connect with professional photographers and videographers in your area. From weddings to product shoots, we've got you covered.</p>
+            <div class="hero-buttons">
+                <a href="user-dashboard.html" class="btn btn-white">Find a Photographer</a>
+                <a href="photographer-register.html" class="btn btn-outline-white">Become a Photographer</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+<h2 class="features-title">Why Choose Pixgram?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Smart Matching</h3>
+                    <p class="feature-desc">Find photographers based on category, location, gender preferences, and pricing that fits your budget.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3 class="feature-title">Secure Payments</h3>
+                    <p class="feature-desc">Pay securely through M-Pesa. Your money is protected until the service is completed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3 class="feature-title">Verified Pros</h3>
+                    <p class="feature-desc">All photographers are verified professionals with portfolios and customer reviews.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3 class="feature-title">Local Experts</h3>
+                    <p class="feature-desc">Find photographers in your city who know the best spots and venues.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-preview" id="categories">
+        <div class="categories-container">
+            <h2 class="categories-title">Explore Our Photography Categories</h2>
+            <div class="categories-grid">
+                <a href="user-dashboard.html?category=music-video" class="category-item">
+                    <div class="icon">🎵</div>
+                    <div class="name">Music Video</div>
+                </a>
+                <a href="user-dashboard.html?category=home-tour" class="category-item">
+                    <div class="icon">🏠</div>
+                    <div class="name">Home Tour</div>
+                </a>
+                <a href="user-dashboard.html?category=family-portrait" class="category-item">
+                    <div class="icon">👨‍👩‍👧</div>
+                    <div class="name">Family Portrait</div>
+                </a>
+                <a href="user-dashboard.html?category=private" class="category-item">
+                    <div class="icon">🔒</div>
+                    <div class="name">Private Sessions</div>
+                </a>
+                <a href="user-dashboard.html?category=wedding" class="category-item">
+                    <div class="icon">💒</div>
+                    <div class="name">Wedding</div>
+                </a>
+                <a href="user-dashboard.html?category=product" class="category-item">
+                    <div class="icon">📦</div>
+                    <div class="name">Product</div>
+                </a>
+                <a href="user-dashboard.html?category=event" class="category-item">
+                    <div class="icon">🎉</div>
+                    <div class="name">Events</div>
+                </a>
+                <a href="user-dashboard.html?category=fashion" class="category-item">
+                    <div class="icon">👗</div>
+                    <div class="name">Fashion</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+<p class="footer-copy">&copy; 2024 Pixgram. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Welcome</h3>
+                <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login">Login</div>
+                    <div class="auth-tab" data-tab="register">Register</div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">I am a:</label>
+                        <select class="form-select" id="loginRole">
+                            <option value="user">Client/User</option>
+                            <option value="photographer">Photographer</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                    <p style="text-align: center; margin-top: 15px; font-size: 14px;">
+                        Admin: admin@system.com / admin123
+                    </p>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="registerName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="registerPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">I want to:</label>
+                        <select class="form-select" id="registerRole">
+                            <option value="user">Hire a Photographer</option>
+                            <option value="photographer">Become a Photographer</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Auth Modal Functions
+        function showAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        // Auth Tab Switching
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                
+                // Update tabs
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update forms
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                document.getElementById(tabName + 'Form').classList.add('active');
+            });
+        });
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('loginRole').value;
+            
+            const result = App.login(email, password, role);
+            
+            if (result.success) {
+                closeAuthModal();
+                App.showNotification('Login successful!', 'success');
+            } else {
+                alert(result.message);
+            }
+        });
+
+        // Register Form
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+            
+            if (role === 'photographer') {
+                // Redirect to photographer registration
+                closeAuthModal();
+                window.location.href = 'photographer-register.html';
+            } else {
+                // Register as client
+                App.registerClient({ fullName: name, email, password });
+                closeAuthModal();
+                App.showNotification('Registration successful!', 'success');
+                window.location.href = 'user-dashboard.html';
+            }
+        });
+
+        // Check if redirected with category
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        if (category) {
+            // Category was selected, redirect to user dashboard with filter
+        }
+    </script>
+</body>
+</html>

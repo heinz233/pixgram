@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photographer Dashboard - Pixgram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+<span>📷</span> Pixgram
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="photographer-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="#" onclick="App.logout()" class="nav-btn nav-btn-outline">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Welcome, <span id="photographerName">Photographer</span></h1>
+            <p class="dashboard-subtitle">Manage your profile and bookings</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalBookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="pendingBookings">0</div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completedBookings">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalEarnings">KES 0</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <!-- Profile Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Your Profile</h3>
+                </div>
+                <div id="profileContent">
+                    <!-- Profile content will be loaded here -->
+                </div>
+                <button class="btn btn-primary" onclick="showEditProfile()">Edit Profile</button>
+            </div>
+
+            <!-- Recent Bookings -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Booking Requests</h3>
+                </div>
+                <div id="bookingsList">
+                    <!-- Bookings will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal-overlay" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Profile</h3>
+                <button class="modal-close" onclick="closeEditProfile()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="editName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="editPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <select class="form-select" id="editLocation" required>
+                            <option value="Nairobi">Nairobi</option>
+                            <option value="Mombasa">Mombasa</option>
+                            <option value="Kisumu">Kisumu</option>
+                            <option value="Nakuru">Nakuru</option>
+                            <option value="Eldoret">Eldoret</option>
+                            <option value="Thika">Thika</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-control" id="editBio" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills</label>
+                        <input type="text" class="form-control" id="editSkills" placeholder="Comma separated">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Check authentication
+        const currentUser = AppData.getCurrentUser();
+        const userRole = AppData.getUserRole();
+        
+        if (!currentUser || userRole !== 'photographer') {
+            window.location.href = 'index.html';
+        }
+
+        // Load photographer data
+        function loadPhotographerData() {
+            document.getElementById('photographerName').textContent = currentUser.fullName;
+            
+            // Load bookings
+            const bookings = AppData.getBookings().filter(b => b.photographerId === currentUser.id);
+            document.getElementById('totalBookings').textContent = bookings.length;
+            document.getElementById('pendingBookings').textContent = bookings.filter(b => b.status === 'pending').length;
+            document.getElementById('completedBookings').textContent = bookings.filter(b => b.status === 'completed').length;
+            
+            // Calculate earnings
+            const earnings = bookings
+                .filter(b => b.status === 'completed')
+                .reduce((sum, b) => sum + (b.amount || 0), 0);
+            document.getElementById('totalEarnings').textContent = 'KES ' + earnings.toLocaleString();
+
+            // Load profile
+            loadProfile();
+            
+            // Load bookings list
+            loadBookingsList();
+        }
+
+        function loadProfile() {
+            const profileHtml = `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Email:</strong> ${currentUser.email || 'N/A'}</p>
+                    <p><strong>Phone:</strong> ${currentUser.phone || 'N/A'}</p>
+                    <p><strong>Location:</strong> ${currentUser.location || 'N/A'}</p>
+                    <p><strong>Age:</strong> ${currentUser.age || 'N/A'}</p>
+                    <p><strong>Gender:</strong> ${currentUser.gender || 'N/A'}</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Bio:</strong></p>
+                    <p>${currentUser.bio || 'No bio added yet'}</p>
+                </div>
+                <div>
+                    <p><strong>Categories:</strong></p>
+                    <div class="photographer-tags">
+                        ${(currentUser.categories || []).map(c => `<span class="tag">${c}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('profileContent').innerHTML = profileHtml;
+        }
+
+        function loadBookingsList() {
+            const bookings = AppData.getBookings().filter(b => b.photographerId === currentUser.id);
+            
+            if (bookings.length === 0) {
+                document.getElementById('bookingsList').innerHTML = `
+                    <div class="empty-state" style="padding: 30px;">
+                        <p>No booking requests yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const bookingsHtml = bookings.slice(0, 5).map(booking => `
+                <div style="padding: 15px; border-bottom: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${booking.clientName}</strong>
+                            <p style="font-size: 13px; color: #666;">${booking.service} - ${booking.bundle}</p>
+                        </div>
+                        <span class="badge badge-${booking.status === 'pending' ? 'warning' : 'success'}">${booking.status}</span>
+                    </div>
+                    ${booking.status === 'pending' ? `
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button class="btn btn-sm btn-success" onclick="updateBooking('${booking.id}', 'accepted')">Accept</button>
+                        <button class="btn btn-sm btn-danger" onclick="updateBooking('${booking.id}', 'rejected')">Reject</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            
+            document.getElementById('bookingsList').innerHTML = bookingsHtml;
+        }
+
+        function updateBooking(bookingId, status) {
+            AppData.updateBookingStatus(bookingId, status);
+            App.showNotification(`Booking ${status}!`, 'success');
+            loadPhotographerData();
+        }
+
+        function showEditProfile() {
+            document.getElementById('editName').value = currentUser.fullName || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editLocation').value = currentUser.location || 'Nairobi';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            document.getElementById('editSkills').value = (currentUser.skills || []).join(', ');
+            
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const updatedUser = {
+                ...currentUser,
+                fullName: document.getElementById('editName').value,
+                phone: document.getElementById('editPhone').value,
+                location: document.getElementById('editLocation').value,
+                bio: document.getElementById('editBio').value,
+                skills: document.getElementById('editSkills').value.split(',').map(s => s.trim())
+            };
+            
+            AppData.saveUser(updatedUser);
+            AppData.setCurrentUser(updatedUser, 'photographer');
+            
+            App.showNotification('Profile updated successfully!', 'success');
+            closeEditProfile();
+            loadPhotographerData();
+        });
+
+        // Initialize
+        loadPhotographerData();
+    </script>
+</body>
+</html>

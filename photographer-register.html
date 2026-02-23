@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register as Photographer - Pixgram</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+<span>📷</span> Pixgram
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#categories" class="nav-link">Categories</a>
+                <a href="#" onclick="App.logout()" class="nav-btn nav-btn-outline">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card" style="max-width: 600px;">
+            <div class="auth-header">
+                <h1>Become a Photographer</h1>
+                <p>Join our network and start getting bookings</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number (for M-Pesa) *</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="2547XXXXXXXX" required>
+                    <small style="color: #666;">We'll send payment requests to this number</small>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Age *</label>
+                        <input type="number" class="form-control" id="age" placeholder="Your age" min="18" max="70" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Gender *</label>
+                        <select class="form-select" id="gender" required>
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location/City *</label>
+                    <select class="form-select" id="location" required>
+                        <option value="">Select your city</option>
+                        <option value="Nairobi">Nairobi</option>
+                        <option value="Mombasa">Mombasa</option>
+                        <option value="Kisumu">Kisumu</option>
+                        <option value="Nakuru">Nakuru</option>
+                        <option value="Eldoret">Eldoret</option>
+                        <option value="Thika">Thika</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Bio / Description *</label>
+                    <textarea class="form-control" id="bio" rows="3" placeholder="Tell clients about yourself, your experience, and style..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Skills/Specializations *</label>
+                    <input type="text" class="form-control" id="skills" placeholder="e.g. Wedding, Portrait, Events (comma separated)" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Categories You Offer *</label>
+                    <div class="categories-grid" style="margin-top: 10px;">
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="music-video" style="margin-right: 8px;">
+                            🎵 Music Video
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="home-tour" style="margin-right: 8px;">
+                            🏠 Home Tour
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="family-portrait" style="margin-right: 8px;">
+                            👨‍👩‍👧 Family Portrait
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="private" style="margin-right: 8px;">
+                            🔒 Private Sessions
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="wedding" style="margin-right: 8px;">
+                            💒 Wedding
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="product" style="margin-right: 8px;">
+                            📦 Product
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="event" style="margin-right: 8px;">
+                            🎉 Events
+                        </label>
+                        <label class="category-card" style="padding: 15px;">
+                            <input type="checkbox" name="categories" value="fashion" style="margin-right: 8px;">
+                            👗 Fashion
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                </div>
+
+                <!-- Payment Section -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">Registration Fee</h4>
+                    <p style="color: #666; margin-bottom: 15px;">To verify your account and appear in search results, please pay a one-time registration fee:</p>
+                    <div style="font-size: 32px; font-weight: bold; color: #667eea;">KES 300</div>
+                    <p style="font-size: 12px; color: #999; margin-top: 5px;">Payment via M-Pesa</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    Pay KES 300 & Register
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="payment.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Registration Form
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get selected categories
+            const categories = [];
+            document.querySelectorAll('input[name="categories"]:checked').forEach(cb => {
+                categories.push(cb.value);
+            });
+            
+            if (categories.length === 0) {
+                alert('Please select at least one category');
+                return;
+            }
+            
+            // Get form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                location: document.getElementById('location').value,
+                bio: document.getElementById('bio').value,
+                skills: document.getElementById('skills').value.split(',').map(s => s.trim()),
+                categories: categories,
+                password: document.getElementById('password').value
+            };
+            
+            // Show payment modal
+            PaymentSimulator.showPaymentModal('registration', 300, {
+                success: function(payment) {
+                    // Save photographer after successful payment
+                    App.registerPhotographer(formData, true);
+App.showNotification('Registration successful! Welcome to Pixgram.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'photographer-dashboard.html';
+                    }, 1500);
+                },
+                error: function(error) {
+                    alert('Payment failed: ' + error);
+                }
+            });
+        });
+
+        // Format phone input
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 12) value = value.slice(0, 12);
+            if (!value.startsWith('254')) value = '254' + value.replace(/^254/, '');
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
